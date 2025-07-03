@@ -180,9 +180,29 @@ const Flashcard = ({ card, isFlipped, onFlip }) => {
   );
 };
 
+// --- Helper function to get initial state from localStorage ---
+const getInitialDeckKey = () => {
+  try {
+    const savedSelection = localStorage.getItem('barExamDeckSelection');
+    if (savedSelection) {
+      const { key, timestamp } = JSON.parse(savedSelection);
+      const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+      
+      // Check if the saved key is valid and not expired
+      if (allDecks[key] && (Date.now() - timestamp < threeHours)) {
+        return key;
+      }
+    }
+  } catch (error) {
+    console.error("Could not parse saved deck selection:", error);
+  }
+  return 'agency'; // Default to 'agency' if nothing is saved, it's expired, or invalid
+};
+
+
 // --- Main App Component ---
 export default function App() {
-  const [deckKey, setDeckKey] = useState('torts');
+  const [deckKey, setDeckKey] = useState(getInitialDeckKey);
   const [deck, setDeck] = useState(allDecks[deckKey]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -195,6 +215,17 @@ export default function App() {
       setDeckKey(newDeckKey);
       setDeck(allDecks[newDeckKey]);
       setCurrentIndex(0);
+
+      // Save the new selection and timestamp to localStorage
+      try {
+        const selection = {
+          key: newDeckKey,
+          timestamp: Date.now()
+        };
+        localStorage.setItem('barExamDeckSelection', JSON.stringify(selection));
+      } catch (error) {
+        console.error("Could not save deck selection:", error);
+      }
     }, 150);
   };
 
