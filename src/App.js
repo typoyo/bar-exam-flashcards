@@ -167,7 +167,7 @@ const ShuffleIcon = () => (
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
   return (
-    <div className="w-full h-80 sm:h-96 landscape:h-full perspective-1000 cursor-pointer" onClick={onFlip}>
+    <div className="w-full h-full perspective-1000 cursor-pointer" onClick={onFlip}>
       <div className={`relative w-full h-full transform-style-3d transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}>
         <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-4 md:p-6 border border-gray-200">
           <p className="text-xl landscape:text-lg sm:text-2xl text-center text-gray-800">{card.question}</p>
@@ -257,10 +257,9 @@ export default function App() {
   };
 
   return (
-    <div className="bg-gray-50 h-screen w-screen flex flex-col font-sans p-2 sm:p-4">
+    <div className="bg-gray-50 h-screen w-screen flex flex-col font-sans p-2 sm:p-4 landscape:py-2">
       <div className="w-full max-w-2xl mx-auto flex flex-col h-full">
-        <header className="flex-shrink-0 text-center py-2">
-          
+        <header className="flex-shrink-0 text-center py-2 landscape:py-1">
           <p className="text-xl text-blue-600 font-semibold mt-1">{deck.subject}</p>
         </header>
 
@@ -278,7 +277,7 @@ export default function App() {
           </select>
         </div>
 
-        <main className="flex-grow relative">
+        <main className="flex-grow relative min-h-0">
           {currentCard ? (
             <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} />
           ) : (
@@ -288,8 +287,8 @@ export default function App() {
           )}
         </main>
 
-        <footer className="flex-shrink-0 py-2">
-          <div className="flex items-center justify-center mb-2">
+        <footer className="flex-shrink-0 py-2 landscape:py-1">
+          <div className="flex items-center justify-center mb-2 landscape:mb-1">
             <p className="text-gray-600 font-medium">
               Card {deck.cards.length > 0 ? currentIndex + 1 : 0} of {deck.cards.length}
             </p>
@@ -308,38 +307,6 @@ export default function App() {
 // --- Custom CSS for 3D transform effects ---
 const style = document.createElement('style');
 style.innerHTML = `
-  @media (min-width: 640px) {
-    .sm\\:h-96 {
-      height: 24rem;
-    }
-  }
-  @media (orientation: landscape) {
-    .landscape\\:h-64 {
-      height: 16rem;
-    }
-    .landscape\\:py-1 {
-      padding-top: 0.25rem;
-      padding-bottom: 0.25rem;
-    }
-    .landscape\\:mb-2 {
-      margin-bottom: 0.5rem;
-    }
-    .landscape\\:text-2xl {
-      font-size: 1.5rem;
-      line-height: 2rem;
-    }
-    .landscape\\:text-lg {
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-    }
-    .landscape\\:text-sm {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-    }
-    .landscape\\:mt-3 {
-        margin-top: 0.75rem;
-    }
-  }
   .perspective-1000 { perspective: 1000px; }
   .transform-style-3d { transform-style: preserve-3d; }
   .rotate-y-180 { transform: rotateY(180deg); }
