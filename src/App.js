@@ -167,13 +167,13 @@ const ShuffleIcon = () => (
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
   return (
-    <div className="w-full h-80 sm:h-96 perspective-1000 cursor-pointer" onClick={onFlip}>
+    <div className="w-full h-80 landscape:h-64 sm:h-96 perspective-1000 cursor-pointer" onClick={onFlip}>
       <div className={`relative w-full h-full transform-style-3d transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}>
         <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
-          <p className="text-xl sm:text-2xl text-center text-gray-800">{card.question}</p>
+          <p className="text-xl landscape:text-lg sm:text-2xl text-center text-gray-800">{card.question}</p>
         </div>
         <div className="absolute w-full h-full backface-hidden bg-gray-100 rounded-xl shadow-lg p-6 border border-gray-200 rotate-y-180 overflow-y-auto">
-          <p className="text-base sm:text-lg text-gray-700 whitespace-pre-line">{card.answer}</p>
+          <p className="text-base landscape:text-sm sm:text-lg text-gray-700 whitespace-pre-line">{card.answer}</p>
         </div>
       </div>
     </div>
@@ -257,14 +257,14 @@ export default function App() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col items-center justify-center font-sans p-2 sm:p-4">
+    <div className="bg-gray-50 min-h-screen flex flex-col items-center justify-center font-sans p-2 landscape:py-1 sm:p-4">
       <div className="w-full max-w-2xl mx-auto">
-        <header className="text-center mb-6">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Bar Exam Flashcards</h1>
+        <header className="text-center mb-4 landscape:mb-2">
+          <h1 className="text-3xl landscape:text-2xl sm:text-4xl font-bold text-gray-800">Bar Exam Flashcards</h1>
           <p className="text-xl text-blue-600 font-semibold mt-1">{deck.subject}</p>
         </header>
 
-        <div className="mb-6 w-full max-w-xs mx-auto">
+        <div className="mb-4 landscape:mb-2 w-full max-w-xs mx-auto">
           <label htmlFor="deck-select" className="block text-sm font-medium text-gray-700 mb-1 text-center">Select Subject:</label>
           <select
             id="deck-select"
@@ -288,13 +288,13 @@ export default function App() {
           )}
         </main>
 
-        <footer className="mt-8">
-          <div className="flex items-center justify-center mb-4">
+        <footer className="mt-6 landscape:mt-3">
+          <div className="flex items-center justify-center mb-2">
             <p className="text-gray-600 font-medium">
               Card {deck.cards.length > 0 ? currentIndex + 1 : 0} of {deck.cards.length}
             </p>
           </div>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2">
             <button onClick={handlePrev} className="flex items-center justify-center p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" aria-label="Previous card"><ChevronLeftIcon /></button>
             <button onClick={handleShuffle} className="flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-semibold text-gray-700" aria-label="Shuffle deck"><ShuffleIcon /> Shuffle</button>
             <button onClick={handleNext} className="flex items-center justify-center p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" aria-label="Next card"><ChevronRightIcon /></button>
@@ -308,6 +308,38 @@ export default function App() {
 // --- Custom CSS for 3D transform effects ---
 const style = document.createElement('style');
 style.innerHTML = `
+  @media (min-width: 640px) {
+    .sm\\:h-96 {
+      height: 24rem;
+    }
+  }
+  @media (orientation: landscape) {
+    .landscape\\:h-64 {
+      height: 16rem;
+    }
+    .landscape\\:py-1 {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+    .landscape\\:mb-2 {
+      margin-bottom: 0.5rem;
+    }
+    .landscape\\:text-2xl {
+      font-size: 1.5rem;
+      line-height: 2rem;
+    }
+    .landscape\\:text-lg {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
+    .landscape\\:text-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+    .landscape\\:mt-3 {
+        margin-top: 0.75rem;
+    }
+  }
   .perspective-1000 { perspective: 1000px; }
   .transform-style-3d { transform-style: preserve-3d; }
   .rotate-y-180 { transform: rotateY(180deg); }
