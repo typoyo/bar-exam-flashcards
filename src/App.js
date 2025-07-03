@@ -167,7 +167,7 @@ const ShuffleIcon = () => (
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
   return (
-    <div className="w-full h-full perspective-1000 cursor-pointer" onClick={onFlip}>
+    <div className="w-full h-80 sm:h-96 landscape:h-full perspective-1000 cursor-pointer" onClick={onFlip}>
       <div className={`relative w-full h-full transform-style-3d transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}>
         <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-4 md:p-6 border border-gray-200">
           <p className="text-xl landscape:text-lg sm:text-2xl text-center text-gray-800">{card.question}</p>
@@ -260,7 +260,7 @@ export default function App() {
     <div className="bg-gray-50 h-screen w-screen flex flex-col font-sans p-2 sm:p-4">
       <div className="w-full max-w-2xl mx-auto flex flex-col h-full">
         <header className="flex-shrink-0 text-center py-2">
-          <h1 className="text-3xl landscape:text-2xl sm:text-4xl font-bold text-gray-800">Bar Exam Flashcards</h1>
+          
           <p className="text-xl text-blue-600 font-semibold mt-1">{deck.subject}</p>
         </header>
 
