@@ -167,12 +167,12 @@ const ShuffleIcon = () => (
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
   return (
-    <div className="w-full h-80 landscape:h-64 sm:h-96 perspective-1000 cursor-pointer" onClick={onFlip}>
+    <div className="w-full h-full perspective-1000 cursor-pointer" onClick={onFlip}>
       <div className={`relative w-full h-full transform-style-3d transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}>
-        <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
+        <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-4 md:p-6 border border-gray-200">
           <p className="text-xl landscape:text-lg sm:text-2xl text-center text-gray-800">{card.question}</p>
         </div>
-        <div className="absolute w-full h-full backface-hidden bg-gray-100 rounded-xl shadow-lg p-6 border border-gray-200 rotate-y-180 overflow-y-auto">
+        <div className="absolute w-full h-full backface-hidden bg-gray-100 rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 rotate-y-180 overflow-y-auto">
           <p className="text-base landscape:text-sm sm:text-lg text-gray-700 whitespace-pre-line">{card.answer}</p>
         </div>
       </div>
@@ -257,14 +257,14 @@ export default function App() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col items-center justify-center font-sans p-2 landscape:py-1 sm:p-4">
-      <div className="w-full max-w-2xl mx-auto">
-        <header className="text-center mb-4 landscape:mb-2">
+    <div className="bg-gray-50 h-screen w-screen flex flex-col font-sans p-2 sm:p-4">
+      <div className="w-full max-w-2xl mx-auto flex flex-col h-full">
+        <header className="flex-shrink-0 text-center py-2">
           <h1 className="text-3xl landscape:text-2xl sm:text-4xl font-bold text-gray-800">Bar Exam Flashcards</h1>
           <p className="text-xl text-blue-600 font-semibold mt-1">{deck.subject}</p>
         </header>
 
-        <div className="mb-4 landscape:mb-2 w-full max-w-xs mx-auto">
+        <div className="flex-shrink-0 mb-4 landscape:mb-2 w-full max-w-xs mx-auto">
           <label htmlFor="deck-select" className="block text-sm font-medium text-gray-700 mb-1 text-center">Select Subject:</label>
           <select
             id="deck-select"
@@ -278,17 +278,17 @@ export default function App() {
           </select>
         </div>
 
-        <main>
+        <main className="flex-grow relative">
           {currentCard ? (
             <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} />
           ) : (
-            <div className="w-full h-96 bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
+            <div className="w-full h-full bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
                 <p className="text-xl text-gray-500">No cards in this deck.</p>
             </div>
           )}
         </main>
 
-        <footer className="mt-6 landscape:mt-3">
+        <footer className="flex-shrink-0 py-2">
           <div className="flex items-center justify-center mb-2">
             <p className="text-gray-600 font-medium">
               Card {deck.cards.length > 0 ? currentIndex + 1 : 0} of {deck.cards.length}
