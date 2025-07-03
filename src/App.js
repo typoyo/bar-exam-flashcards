@@ -136,7 +136,7 @@ const allDecks = {
   wills: {
     subject: "Wills & Decedent’s Estates",
     cards: [
-        { question: "What are the requirements for a valid attested will?", answer: "The will must be (1) in writing, (2) signed by the testator (or at their direction), and (3) signed by at least two witnesses who saw the testator sign or acknowledge the will." },
+        { question: "What are the requirements for a valid attested will?", answer: "The will must be (1) in writing, (2) signed by the testator (or at their direction), and (3) signed by at least two witnesses who saw the testator sign or acknowledge the a will." },
         { question: "What is a Holographic Will?", answer: "A will that is written in the testator's handwriting. In jurisdictions that recognize them, the material provisions must be in the testator's handwriting and it must be signed by the testator. Witnesses are not required." },
         { question: "What is the Anti-Lapse Statute?", answer: "Prevents a gift from failing (lapsing) when a beneficiary predeceases the testator. If the beneficiary is a specified relative of the testator and left issue (descendants), the gift passes to the issue instead of the residuary." },
         { question: "What is Ademption?", answer: "The common law doctrine that a specific bequest fails if the property is no longer in the testator's estate at death. Many states have modified this rule to allow the beneficiary to receive replacement property or the sale proceeds in some cases." },
