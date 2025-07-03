@@ -1,4 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useLayoutEffect } from 'react';
+
+// --- Custom Hook to get real viewport height ---
+const useWindowHeight = () => {
+  const [height, setHeight] = useState(window.innerHeight);
+
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      setHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial height
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return height;
+};
+
 
 // --- Data for all flashcard decks ---
 const allDecks = {
@@ -202,6 +221,7 @@ const getInitialDeckKey = () => {
 
 // --- Main App Component ---
 export default function App() {
+  const windowHeight = useWindowHeight();
   const [deckKey, setDeckKey] = useState(getInitialDeckKey);
   const [deck, setDeck] = useState(allDecks[deckKey]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -257,8 +277,8 @@ export default function App() {
   };
 
   return (
-    <div className="bg-gray-50 h-screen w-screen flex flex-col font-sans p-2 sm:p-4 landscape:py-2">
-      <div className="w-full max-w-2xl mx-auto flex flex-col h-full">
+    <div className="bg-gray-50 w-screen flex flex-col font-sans" style={{ height: windowHeight }}>
+      <div className="w-full max-w-2xl mx-auto flex flex-col h-full p-2 sm:p-4">
         <header className="flex-shrink-0 text-center py-2 landscape:py-1">
           {/* The subject title has been removed from here */}
         </header>
@@ -301,7 +321,7 @@ export default function App() {
           </div>
         </footer>
       </div>
-    </div> 
+    </div>
   );
 }
 
@@ -313,4 +333,4 @@ style.innerHTML = `
   .rotate-y-180 { transform: rotateY(180deg); }
   .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);
