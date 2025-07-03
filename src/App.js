@@ -301,7 +301,7 @@ export default function App() {
           </div>
         </footer>
       </div>
-    </div>
+    </div> 
   );
 }
 
@@ -313,4 +313,4 @@ style.innerHTML = `
   .rotate-y-180 { transform: rotateY(180deg); }
   .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 `;
-document.head.appendChild(style);
+document.head.appendChild(style); 
