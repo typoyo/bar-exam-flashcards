@@ -167,13 +167,13 @@ const ShuffleIcon = () => (
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
   return (
-    <div className="w-full h-96 perspective-1000 cursor-pointer" onClick={onFlip}>
+    <div className="w-full h-80 sm:h-96 perspective-1000 cursor-pointer" onClick={onFlip}>
       <div className={`relative w-full h-full transform-style-3d transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}>
         <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
-          <p className="text-2xl text-center text-gray-800">{card.question}</p>
+          <p className="text-xl sm:text-2xl text-center text-gray-800">{card.question}</p>
         </div>
         <div className="absolute w-full h-full backface-hidden bg-gray-100 rounded-xl shadow-lg p-6 border border-gray-200 rotate-y-180 overflow-y-auto">
-          <p className="text-lg text-gray-700 whitespace-pre-line">{card.answer}</p>
+          <p className="text-base sm:text-lg text-gray-700 whitespace-pre-line">{card.answer}</p>
         </div>
       </div>
     </div>
@@ -187,20 +187,17 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  // Memoize the current card to prevent re-renders
   const currentCard = useMemo(() => deck.cards[currentIndex], [deck, currentIndex]);
 
-  // Function to change the active deck
   const changeDeck = (newDeckKey) => {
     setIsFlipped(false);
     setTimeout(() => {
       setDeckKey(newDeckKey);
       setDeck(allDecks[newDeckKey]);
       setCurrentIndex(0);
-    }, 150); // Delay to allow card to flip back smoothly
+    }, 150);
   };
 
-  // Navigate to the next card
   const handleNext = () => {
     setIsFlipped(false);
     setTimeout(() => {
@@ -208,7 +205,6 @@ export default function App() {
     }, 150);
   };
 
-  // Navigate to the previous card
   const handlePrev = () => {
     setIsFlipped(false);
     setTimeout(() => {
@@ -216,7 +212,6 @@ export default function App() {
     }, 150);
   };
 
-  // Shuffle the current deck
   const handleShuffle = () => {
     setIsFlipped(false);
     setTimeout(() => {
@@ -226,16 +221,15 @@ export default function App() {
     }, 150);
   };
 
-  // Flip the current card
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col items-center justify-center font-sans p-4">
+    <div className="bg-gray-50 min-h-screen flex flex-col items-center justify-center font-sans p-2 sm:p-4">
       <div className="w-full max-w-2xl mx-auto">
         <header className="text-center mb-6">
-          <h1 className="text-4xl font-bold text-gray-800">Bar Exam Flashcards</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Bar Exam Flashcards</h1>
           <p className="text-xl text-blue-600 font-semibold mt-1">{deck.subject}</p>
         </header>
 
