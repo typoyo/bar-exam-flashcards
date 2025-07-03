@@ -260,16 +260,17 @@ export default function App() {
     <div className="bg-gray-50 h-screen w-screen flex flex-col font-sans p-2 sm:p-4 landscape:py-2">
       <div className="w-full max-w-2xl mx-auto flex flex-col h-full">
         <header className="flex-shrink-0 text-center py-2 landscape:py-1">
-          <p className="text-xl text-blue-600 font-semibold mt-1">{deck.subject}</p>
+          {/* The subject title has been removed from here */}
         </header>
 
         <div className="flex-shrink-0 mb-4 landscape:mb-2 w-full max-w-xs mx-auto">
-          <label htmlFor="deck-select" className="block text-sm font-medium text-gray-700 mb-1 text-center">Select Subject:</label>
+          {/* The label has been removed from here */}
           <select
             id="deck-select"
             value={deckKey}
             onChange={(e) => changeDeck(e.target.value)}
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+            aria-label="Select Subject"
           >
             {Object.keys(allDecks).map(key => (
               <option key={key} value={key}>{allDecks[key].subject}</option>
