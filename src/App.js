@@ -398,6 +398,11 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
+  // State for touch swipe
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const minSwipeDistance = 50;
+
   const currentCard = useMemo(() => deck.cards[currentIndex], [deck, currentIndex]);
 
   const changeDeck = (newDeckKey) => {
@@ -446,6 +451,39 @@ export default function App() {
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
+  
+  const handleTouchStart = (e) => {
+    setTouchEnd(null); // Reset touch end on new touch
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart === null || touchEnd === null) {
+        // This was a tap, not a swipe
+        handleFlip();
+        return;
+    }
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    } else {
+      // It's a tap if the swipe distance is small
+      handleFlip();
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
 
   return (
     <div className="bg-gray-50 w-screen flex flex-col font-sans" style={{ height: windowHeight }}>
@@ -469,9 +507,14 @@ export default function App() {
           </select>
         </div>
 
-        <main className="flex-grow relative min-h-0">
+        <main 
+          className="flex-grow relative min-h-0"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           {currentCard ? (
-            <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} />
+            <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={() => {}} /> // Pass empty function as onFlip is handled by touchEnd
           ) : (
             <div className="w-full h-full bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
                 <p className="text-xl text-gray-500">No cards in this deck.</p>
@@ -479,7 +522,7 @@ export default function App() {
           )}
         </main>
 
-        <footer className="flex-shrink-0 py-2 landscape:py-1">
+        <footer className="flex-shrink-0 py-2 landscape:py-1 hidden sm:block">
           <div className="flex items-center justify-center mb-2 landscape:mb-1">
             <p className="text-gray-600 font-medium">
               Card {deck.cards.length > 0 ? currentIndex + 1 : 0} of {deck.cards.length}
