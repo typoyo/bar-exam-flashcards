@@ -357,7 +357,7 @@ const ShuffleIcon = () => (
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
   return (
-    <div className="w-full h-full perspective-1000 cursor-pointer" onClick={onFlip}>
+    <div className="w-full h-full perspective-1000" onClick={onFlip}>
       <div className={`relative w-full h-full transform-style-3d transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}>
         <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center p-4 md:p-6 border border-gray-200">
           <p className="text-xl landscape:text-lg sm:text-2xl text-center text-gray-800">{card.question}</p>
@@ -463,8 +463,7 @@ export default function App() {
 
   const handleTouchEnd = () => {
     if (touchStart === null || touchEnd === null) {
-        // This was a tap, not a swipe
-        handleFlip();
+        // This case handles taps, which are now managed by the main onClick
         return;
     }
     const distance = touchStart - touchEnd;
@@ -475,9 +474,6 @@ export default function App() {
       handleNext();
     } else if (isRightSwipe) {
       handlePrev();
-    } else {
-      // It's a tap if the swipe distance is small
-      handleFlip();
     }
 
     setTouchStart(null);
@@ -514,7 +510,7 @@ export default function App() {
           onTouchEnd={handleTouchEnd}
         >
           {currentCard ? (
-            <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={() => {}} /> // Pass empty function as onFlip is handled by touchEnd
+            <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} /> 
           ) : (
             <div className="w-full h-full bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
                 <p className="text-xl text-gray-500">No cards in this deck.</p>
