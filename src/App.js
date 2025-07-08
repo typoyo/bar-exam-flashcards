@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect } from 'react';
+import React, { useState, useMemo, useLayoutEffect, useEffect } from 'react';
 
 // --- Custom Hook to get real viewport height ---
 const useWindowHeight = () => {
@@ -19,7 +19,7 @@ const useWindowHeight = () => {
 };
 
 
-// --- Data for all flashcard decks ---
+// --- Data for Flashcards (Greatly Expanded) ---
 const allDecks = {
   agency: {
     subject: "Agency",
@@ -344,15 +344,12 @@ const allDecks = {
 };
 
 // --- Helper Icon Components ---
-const ChevronLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-);
-const ChevronRightIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-);
-const ShuffleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2l4.3 8.2c.7 1.3 2.1 2.2 3.6 2.2H22"/><path d="m18 22-4-4 4-4"/></svg>
-);
+const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
+const ListChecksIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>;
+const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>;
+const ChevronLeftIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>;
+const ChevronRightIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>;
+const ShuffleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2l4.3 8.2c.7 1.3 2.1 2.2 3.6 2.2H22"/><path d="m18 22-4-4 4-4"/></svg>;
 
 // --- Flashcard Component ---
 const Flashcard = ({ card, isFlipped, onFlip }) => {
@@ -376,9 +373,7 @@ const getInitialDeckKey = () => {
     const savedSelection = localStorage.getItem('barExamDeckSelection');
     if (savedSelection) {
       const { key, timestamp } = JSON.parse(savedSelection);
-      const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
-      
-      // Check if the saved key is valid and not expired
+      const threeHours = 3 * 60 * 60 * 1000;
       if (allDecks[key] && (Date.now() - timestamp < threeHours)) {
         return key;
       }
@@ -386,19 +381,15 @@ const getInitialDeckKey = () => {
   } catch (error) {
     console.error("Could not parse saved deck selection:", error);
   }
-  return 'agency'; // Default to 'agency' if nothing is saved, it's expired, or invalid
+  return 'agency';
 };
 
-
-// --- Main App Component ---
-export default function App() {
-  const windowHeight = useWindowHeight();
+// --- Flashcard Tool Component ---
+const FlashcardTool = () => {
   const [deckKey, setDeckKey] = useState(getInitialDeckKey);
   const [deck, setDeck] = useState(allDecks[deckKey]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-
-  // State for touch swipe
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const minSwipeDistance = 50;
@@ -411,13 +402,8 @@ export default function App() {
       setDeckKey(newDeckKey);
       setDeck(allDecks[newDeckKey]);
       setCurrentIndex(0);
-
-      // Save the new selection and timestamp to localStorage
       try {
-        const selection = {
-          key: newDeckKey,
-          timestamp: Date.now()
-        };
+        const selection = { key: newDeckKey, timestamp: Date.now() };
         localStorage.setItem('barExamDeckSelection', JSON.stringify(selection));
       } catch (error) {
         console.error("Could not save deck selection:", error);
@@ -427,109 +413,233 @@ export default function App() {
 
   const handleNext = () => {
     setIsFlipped(false);
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % deck.cards.length);
-    }, 150);
+    setTimeout(() => setCurrentIndex((prev) => (prev + 1) % deck.cards.length), 150);
   };
 
   const handlePrev = () => {
     setIsFlipped(false);
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + deck.cards.length) % deck.cards.length);
-    }, 150);
+    setTimeout(() => setCurrentIndex((prev) => (prev - 1 + deck.cards.length) % deck.cards.length), 150);
   };
 
   const handleShuffle = () => {
     setIsFlipped(false);
     setTimeout(() => {
-      const shuffledCards = [...deck.cards].sort(() => Math.random() - 0.5);
-      setDeck(prevDeck => ({ ...prevDeck, cards: shuffledCards }));
+      const shuffled = [...deck.cards].sort(() => Math.random() - 0.5);
+      setDeck(prev => ({ ...prev, cards: shuffled }));
       setCurrentIndex(0);
     }, 150);
   };
 
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
-  
+  const handleFlip = () => setIsFlipped(!isFlipped);
+
   const handleTouchStart = (e) => {
-    setTouchEnd(null); // Reset touch end on new touch
+    setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
 
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
+  const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
 
   const handleTouchEnd = () => {
-    if (touchStart === null || touchEnd === null) {
-        // This case handles taps, which are now managed by the main onClick
-        return;
+    if (!touchStart || !touchEnd) {
+      // This case handles taps, which are now managed by the main onClick
+      return;
     }
     const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe) {
-      handleNext();
-    } else if (isRightSwipe) {
-      handlePrev();
-    }
-
+    if (distance > minSwipeDistance) handleNext();
+    else if (distance < -minSwipeDistance) handlePrev();
     setTouchStart(null);
     setTouchEnd(null);
   };
 
+  return (
+    <div className="w-full h-full flex flex-col">
+       <div className="flex-shrink-0 mb-4 landscape:mb-2 w-full max-w-xs mx-auto">
+          <select id="deck-select" value={deckKey} onChange={(e) => changeDeck(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm" aria-label="Select Subject">
+            {Object.keys(allDecks).map(key => <option key={key} value={key}>{allDecks[key].subject}</option>)}
+          </select>
+        </div>
+      <main className="flex-grow relative min-h-0" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+        {currentCard ? <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} /> : <p>No cards.</p>}
+      </main>
+      <footer className="flex-shrink-0 py-2 landscape:py-1">
+        <div className="flex items-center justify-center mb-2 landscape:mb-1">
+          <p className="text-gray-600 font-medium">Card {deck.cards.length > 0 ? currentIndex + 1 : 0} of {deck.cards.length}</p>
+        </div>
+        <div className="sm:flex items-center justify-center gap-2 hidden">
+          <button onClick={handlePrev} className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100"><ChevronLeftIcon /></button>
+          <button onClick={handleShuffle} className="px-6 py-3 bg-white rounded-full shadow-md hover:bg-gray-100 font-semibold text-gray-700 flex items-center gap-2"><ShuffleIcon /> Shuffle</button>
+          <button onClick={handleNext} className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100"><ChevronRightIcon /></button>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+// --- MBE Practice Tool Component ---
+const MBEPracticeTool = () => {
+    const [subject, setSubject] = useState('torts');
+    const [currentQuestion, setCurrentQuestion] = useState(null);
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [showFeedback, setShowFeedback] = useState(false);
+    const [score, setScore] = useState({ correct: 0, total: 0 });
+
+    const loadNewQuestion = () => {
+        const questionsForSubject = mbeQuestions[subject];
+        const randomIndex = Math.floor(Math.random() * questionsForSubject.length);
+        setCurrentQuestion(questionsForSubject[randomIndex]);
+        setSelectedAnswer(null);
+        setShowFeedback(false);
+    };
+
+    useEffect(() => {
+        loadNewQuestion();
+    }, [subject]);
+
+    const handleAnswerSelect = (option) => {
+        if (showFeedback) return;
+        setSelectedAnswer(option);
+        setShowFeedback(true);
+        if (option === currentQuestion.correctAnswer) {
+            setScore(prev => ({ ...prev, correct: prev.correct + 1, total: prev.total + 1 }));
+        } else {
+            setScore(prev => ({ ...prev, total: prev.total + 1 }));
+        }
+    };
+
+    return (
+        <div className="w-full h-full flex flex-col p-4">
+            <div className="flex-shrink-0 mb-4 flex justify-between items-center">
+                <select value={subject} onChange={(e) => setSubject(e.target.value)} className="block w-full max-w-xs pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                    {Object.keys(mbeQuestions).map(key => <option key={key} value={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</option>)}
+                </select>
+                <div className="text-lg font-semibold">Score: {score.correct} / {score.total}</div>
+            </div>
+            <div className="flex-grow bg-white p-6 rounded-lg shadow-md overflow-y-auto">
+                {currentQuestion && (
+                    <div>
+                        <p className="text-lg font-medium mb-4">{currentQuestion.question}</p>
+                        <div className="space-y-3">
+                            {currentQuestion.options.map((option, index) => {
+                                let bgColor = 'bg-gray-100 hover:bg-gray-200';
+                                if (showFeedback) {
+                                    if (option === currentQuestion.correctAnswer) {
+                                        bgColor = 'bg-green-200';
+                                    } else if (option === selectedAnswer) {
+                                        bgColor = 'bg-red-200';
+                                    }
+                                }
+                                return (
+                                    <button key={index} onClick={() => handleAnswerSelect(option)} className={`w-full text-left p-3 rounded-md transition-colors ${bgColor}`}>
+                                        {option}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {showFeedback && (
+                            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                                <h3 className="font-bold">Explanation:</h3>
+                                <p>{currentQuestion.explanation}</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+            <div className="flex-shrink-0 mt-4 text-center">
+                <button onClick={loadNewQuestion} className="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">Next Question</button>
+            </div>
+        </div>
+    );
+};
+
+// --- Essay Simulator Component ---
+const EssaySimulator = () => {
+    const [prompt, setPrompt] = useState(null);
+    const [essay, setEssay] = useState('');
+    const [time, setTime] = useState(1800); // 30 minutes in seconds
+    const [isActive, setIsActive] = useState(false);
+
+    useEffect(() => {
+        let interval = null;
+        if (isActive && time > 0) {
+            interval = setInterval(() => {
+                setTime(t => t - 1);
+            }, 1000);
+        } else if (time === 0) {
+            setIsActive(false);
+        }
+        return () => clearInterval(interval);
+    }, [isActive, time]);
+
+    const generatePrompt = () => {
+        const randomIndex = Math.floor(Math.random() * essayPrompts.length);
+        setPrompt(essayPrompts[randomIndex]);
+        setEssay('');
+        setTime(1800);
+        setIsActive(true);
+    };
+
+    const formatTime = () => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    return (
+        <div className="w-full h-full flex flex-col p-4">
+            <div className="flex-shrink-0 mb-4 flex justify-between items-center">
+                <button onClick={generatePrompt} className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">Generate New Prompt</button>
+                <div className={`text-2xl font-bold ${time < 300 ? 'text-red-500' : 'text-gray-800'}`}>{formatTime()}</div>
+            </div>
+            <div className="flex-grow flex flex-col min-h-0">
+                {prompt && (
+                    <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex-shrink-0">
+                        <h3 className="font-bold text-lg">{prompt.subject}</h3>
+                        <p>{prompt.prompt}</p>
+                    </div>
+                )}
+                <textarea value={essay} onChange={(e) => setEssay(e.target.value)} placeholder="Begin writing your essay here..." className="w-full flex-grow p-4 border border-gray-300 rounded-lg shadow-inner focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+            </div>
+        </div>
+    );
+};
+
+
+// --- Main App Component ---
+export default function App() {
+  const windowHeight = useWindowHeight();
+  const [activeTab, setActiveTab] = useState('flashcards');
+
+  const renderTabContent = () => {
+      switch(activeTab) {
+          case 'mbe':
+              return <MBEPracticeTool />;
+          case 'essay':
+              return <EssaySimulator />;
+          case 'flashcards':
+          default:
+              return <FlashcardTool />;
+      }
+  };
 
   return (
     <div className="bg-gray-50 w-screen flex flex-col font-sans" style={{ height: windowHeight }}>
-      <div className="w-full max-w-2xl mx-auto flex flex-col h-full p-2 sm:p-4">
-        <header className="flex-shrink-0 text-center py-2 landscape:py-1">
-          {/* The subject title has been removed from here */}
-        </header>
-
-        <div className="flex-shrink-0 mb-4 landscape:mb-2 w-full max-w-xs mx-auto">
-          {/* The label has been removed from here */}
-          <select
-            id="deck-select"
-            value={deckKey}
-            onChange={(e) => changeDeck(e.target.value)}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
-            aria-label="Select Subject"
-          >
-            {Object.keys(allDecks).map(key => (
-              <option key={key} value={key}>{allDecks[key].subject}</option>
-            ))}
-          </select>
-        </div>
-
-        <main 
-          className="flex-grow relative min-h-0"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {currentCard ? (
-            <Flashcard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} /> 
-          ) : (
-            <div className="w-full h-full bg-white rounded-xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
-                <p className="text-xl text-gray-500">No cards in this deck.</p>
+      <div className="w-full max-w-4xl mx-auto flex flex-col h-full">
+        <nav className="flex-shrink-0 border-b-2 border-gray-200">
+            <div className="flex justify-center -mb-px">
+                <button onClick={() => setActiveTab('flashcards')} className={`px-4 py-3 border-b-4 ${activeTab === 'flashcards' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} flex items-center gap-2`}>
+                    <BookOpenIcon /> Flashcards
+                </button>
+                <button onClick={() => setActiveTab('mbe')} className={`px-4 py-3 border-b-4 ${activeTab === 'mbe' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} flex items-center gap-2`}>
+                    <ListChecksIcon /> MBE Practice
+                </button>
+                <button onClick={() => setActiveTab('essay')} className={`px-4 py-3 border-b-4 ${activeTab === 'essay' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} flex items-center gap-2`}>
+                    <FileTextIcon /> Essay Simulator
+                </button>
             </div>
-          )}
-        </main>
-
-        <footer className="flex-shrink-0 py-2 landscape:py-1 hidden sm:block">
-          <div className="flex items-center justify-center mb-2 landscape:mb-1">
-            <p className="text-gray-600 font-medium">
-              Card {deck.cards.length > 0 ? currentIndex + 1 : 0} of {deck.cards.length}
-            </p>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <button onClick={handlePrev} className="flex items-center justify-center p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" aria-label="Previous card"><ChevronLeftIcon /></button>
-            <button onClick={handleShuffle} className="flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-semibold text-gray-700" aria-label="Shuffle deck"><ShuffleIcon /> Shuffle</button>
-            <button onClick={handleNext} className="flex items-center justify-center p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" aria-label="Next card"><ChevronRightIcon /></button>
-          </div>
-        </footer>
+        </nav>
+        <div className="flex-grow min-h-0">
+            {renderTabContent()}
+        </div>
       </div>
     </div>
   );
