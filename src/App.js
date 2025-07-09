@@ -343,6 +343,54 @@ const allDecks = {
   }
 };
 
+// --- Data for MBE Questions ---
+const mbeQuestions = {
+  torts: [
+    {
+      question: "A driver, while texting, runs a red light and strikes a pedestrian in the crosswalk. The pedestrian suffers a broken leg. In a negligence action against the driver, what is the likely effect of the driver's violation of the traffic statute?",
+      options: [
+        "It will be conclusive proof of the driver's negligence.",
+        "It will be irrelevant to the issue of negligence.",
+        "It will serve as evidence of a breach of duty.",
+        "It will automatically entitle the pedestrian to punitive damages."
+      ],
+      correctAnswer: "It will serve as evidence of a breach of duty.",
+      explanation: "The violation of a statute, such as a traffic law, can be used as evidence of a breach of duty under the doctrine of negligence per se. It establishes a conclusive presumption of duty and breach, but the plaintiff must still prove causation and damages."
+    },
+    {
+      question: "A homeowner hosted a party. A guest, after drinking several beers provided by the homeowner, slipped on a wet spot on the kitchen floor and was injured. The homeowner was unaware of the spill. In a jurisdiction that follows traditional landowner liability rules, what duty of care did the homeowner owe the guest?",
+      options: [
+        "A duty to refrain from willful and wanton misconduct.",
+        "A duty to warn of or make safe known, concealed dangers.",
+        "A duty to inspect for and make safe all dangerous conditions.",
+        "No duty, as the guest assumed the risk by attending the party."
+      ],
+      correctAnswer: "A duty to warn of or make safe known, concealed dangers.",
+      explanation: "In most jurisdictions, a social guest is classified as a licensee. A landowner owes a licensee a duty to warn of or make safe any known, concealed dangerous conditions on the property. The landowner has no duty to inspect for unknown dangers."
+    }
+  ],
+  contracts: [
+    {
+      question: "A builder contracts to construct a house for a homeowner for $300,000. After completing half the work, the builder demands an additional $50,000 to finish the job due to a rise in the price of lumber. The homeowner agrees in writing. Is the homeowner's promise to pay the additional $50,000 enforceable?",
+      options: [
+        "Yes, because the modification was in writing.",
+        "Yes, because the rise in lumber prices was an unforeseen difficulty.",
+        "No, because of the pre-existing duty rule.",
+        "No, unless the contract was for the sale of goods."
+      ],
+      correctAnswer: "No, because of the pre-existing duty rule.",
+      explanation: "Under the common law, a modification to a contract must be supported by new consideration. The builder was already under a pre-existing duty to build the house for $300,000. Simply promising to perform that same duty is not valid consideration for the homeowner's promise to pay more."
+    }
+  ]
+};
+
+// --- Data for Essay Prompts ---
+const essayPrompts = [
+    { subject: 'Torts', prompt: 'A man was injured when a defective toaster he purchased from a local appliance store caught fire. The toaster was manufactured by a large, out-of-state corporation. The man brings a negligence and strict products liability action against both the store and the manufacturer in state court. Discuss the claims the man can bring against the store and the manufacturer, and any defenses they may raise.' },
+    { subject: 'Contracts', prompt: 'A small bakery entered into a written contract with a flour supplier for the delivery of 1,000 pounds of specialty flour per month for one year at a fixed price. Six months into the contract, a widespread crop failure caused the market price of the flour to double. The supplier informed the bakery that it could no longer provide the flour at the contract price. Discuss the rights and remedies of the bakery.' },
+    { subject: 'Constitutional Law', prompt: 'A state legislature, concerned about out-of-state tourists causing traffic congestion, passes a law charging all out-of-state vehicles a $50 toll to use the state’s most popular scenic highway. In-state vehicles are charged only $5. A tourist from a neighboring state challenges the law in federal court. Discuss the constitutional bases for the tourist’s challenge.' }
+];
+
 // --- Helper Icon Components ---
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ListChecksIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>;
